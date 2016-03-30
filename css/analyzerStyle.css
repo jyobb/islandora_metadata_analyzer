@@ -1,0 +1,26 @@
+#resultblock {
+border:1px solid #e5e5e5;
+
+}
+
+.elem-0 {
+ margin-left: 10px;
+ background-color: #787878; 
+ border: 1px solid #000;
+ color: #fff;
+}
+
+
+.elem-elem {
+background-color: #C0C0C0;
+
+}
+
+.elem-sub {
+  margin-left: 20px;
+}
+
+.elem-1 {
+ margin-left: 20px;
+ background-color: #B0B0B0; 
+} 

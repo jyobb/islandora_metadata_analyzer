@@ -1,0 +1,9 @@
+name = Islandora Metadata Analyzer
+dependencies[] = islandora
+description = Analyze MODS and DC metadata
+configure = admin/islandora
+package = USask
+version = 7.x-dev
+core = 7.x
+
+stylesheets[all][] = css/analyzerStyle.css

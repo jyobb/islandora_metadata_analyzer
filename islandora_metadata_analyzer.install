@@ -1,0 +1,186 @@
+<?php
+
+/**
+ * Implements hook_schema
+ */
+function islandora_metadata_analyzer_schema() {
+
+$schema['islandora_metadata_analyzer_results'] = array(
+    'description' => t('Storage area for results.'),
+    'fields' => array(
+      'result_id' => array(
+        'description' => 'The primary identifier for each result.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'title' => array(
+        'description' => t('Title of result set'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'unnamed result', 
+      ),
+      'query_time' => array(
+        'description' => t('Time for query'), 
+        'type' => 'varchar', 
+        'length' => 32, 
+        'not null' => TRUE, 
+        'default' => '0',
+      ),
+      'pid' => array(
+        'description' => t('PID of parent collection'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'no:pid', 
+      ),
+      'element_data' => array(
+        'description' => t('Data collected on elements'), 
+        'type' => 'blob', 
+        'length' => 'normal', 
+        'not null' => TRUE, 
+      ),
+      'record_count' => array(
+        'description' => t('Count of Records Processed'), 
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('result_id'),
+  );
+
+/*Metadata paths*/
+$schema['islandora_metadata_analyzer_paths'] = array(
+    'description' => t('Storage area for results.'),
+    'fields' => array(
+      'path_id' => array(
+        'description' => 'The primary identifier for each path.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'result_id' => array(
+        'description' => t('Key to parent result set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'path' => array(
+        'description' => t('Metadata Path'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nopath', 
+      ),
+    ),
+    'primary key' => array('path_id'),
+);
+
+/*Hold path and data relationship*/
+$schema['islandora_metadata_analyzer_path_data'] = array(
+    'description' => t('Storage area for path data.'),
+    'fields' => array(
+      'path_data_id' => array(
+        'description' => 'The primary identifier for each path.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'path_id' => array(
+        'description' => t('Key to parent path set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'path_data' => array(
+        'description' => t('Path Data'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nodata', 
+      ),
+    ),
+    'primary key' => array('path_data_id'),
+);
+
+
+/*Table to hold the pids and data relationship*/
+$schema['islandora_metadata_analyzer_data_pids'] = array(
+    'description' => t('Storage area for PID.'),
+    'fields' => array(
+      'pid_id' => array(
+        'description' => 'The primary identifier for each path.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'path_data_id' => array(
+        'description' => t('Key to parent path set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'pid' => array(
+        'description' => t('PIDs with data'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nodata', 
+      ),
+    ),
+    'primary key' => array('pid_id'),
+);
+
+$schema['islandora_metadata_analyzer_pids'] = array(
+    'description' => t('Storage area for all pids looked at PIDs.'),
+    'fields' => array(
+      'result_id' => array(
+        'description' => t('Key to parent path set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'pid' => array(
+        'description' => t('PIDs looked at in analysis'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nodata', 
+      ),
+    ),
+
+);
+
+
+
+
+
+
+
+
+
+return $schema;
+
+}
+/*
+function islandora_metadata_analyzer_update_7100() {
+
+ db_add_field('islandora_metadata_analyzer_results', 'record_count', array(
+        'description' => t('Count of Records Processed'), 
+       'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,)
+ );
+
+}
+*/
+
+?>

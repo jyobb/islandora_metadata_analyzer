@@ -1,0 +1,42 @@
+<?php
+
+function islandora_DC_metadata_analyzer($object){
+
+$dc = $object['DC']->content;
+
+$xml = simplexml_load_string($dc, null, null, 'dc', true);
+if($xml === false){
+  dpm("bad load");
+}
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
+dpm($array);
+
+
+/*
+$sxe = simplexml_load_string($dc, 'SimpleXMLIterator', null, 'dc', true);
+dpm($sxe);
+  for ($sxe->rewind(); $sxe->valid(); $sxe->next()) {
+      dpm($sxe->key());
+      dpm($sxe->current()->__toString());
+    if ($sxe->hasChildren()) {
+      foreach ($sxe->getChildren() as $element) {
+      	dpm($element->key());      
+        dpm($element->__toString());
+      }
+    }else{
+
+    }
+  }
+
+*/
+
+
+
+//$sxi = new SimpleXmlIterator($dc, null, true);
+  
+//$DC_doc = new SimpleXMLElement($dc);
+
+//dpm($DC_doc);
+
+}

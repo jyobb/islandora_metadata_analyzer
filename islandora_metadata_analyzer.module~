@@ -1,0 +1,173 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function islandora_metadata_analyzer_init(){
+  //drupal_add_js('misc/jquery.form.js');
+  //drupal_add_library('system', 'drupal.ajax');
+}
+
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_metadata_analyzer_menu() {
+  $items = array();
+
+  $items['metadata_analyzer'] = array(
+    'title' => 'Islandora Metadata Analyzer',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_metadata_analyzer_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['metadata_analyzer/results'] = array(
+    'title' => 'Metadata Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_results',
+    'file' => 'includes/analyzerViews.inc',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['metadata_analyzer/elementCount'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_element_counts',
+    'page arguements' => array(1),
+    'file' => 'includes/analyzerViews.inc',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
+/*  
+  $items['metadata_analyzer/ajax-path'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_path_ajax',
+    'file' => 'includes/analyzerViews.inc',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+*/
+
+  return $items;
+}
+
+
+function islandora_metadata_analyzer_theme($existing, $type, $theme, $path) {
+    return array(
+        'results_list' => array(
+            'variables' => array(
+              'resultArray' => NULL,
+            ),
+            'template' => 'theme/islandora-metadata-analyzer-result-list', // do not include .tpl.php
+            'path' => drupal_get_path('module', 'islandora_metadata_analyzer'), '/theme',
+        ),
+        'element_count' => array(
+            'variables' => array(
+	      'result_id' => NULL,		
+              'title' => NULL,
+              'pid' => NULL,
+              'query_time' => NULL,
+              'countArray' => NULL,
+              'record_count' => NULL,
+              'path_data' => NULL,
+            ),
+            'template' => 'theme/islandora-metadata-analyzer-element-count', // do not include .tpl.php
+            'path' => drupal_get_path('module', 'islandora_metadata_analyzer'), '/theme',
+        ),
+    );
+}
+
+
+
+
+/** Optional callback to manipulate and set variables */
+function template_preprocess_results_list(&$vars) {
+  // This variable will be available in the template file as $custom_value
+
+}
+
+
+/** Optional callback to manipulate and set variables */
+function template_preprocess_element_count(&$vars) {
+  //unserialize object
+  $vars['countArray'] = unserialize($vars['countArray']);
+}
+
+
+
+function islandora_metadata_analyzer_form($form, &$form_state){
+  $form['results_link'] = array(
+    '#markup' => '<a href="metadata_analyzer/results">View Results</a>',
+    //'#value' => 
+  );
+  $form['result_set_title'] = array(
+    '#type' => 'textfield',
+    '#size' => 30,
+    '#required' => TRUE,
+    '#title' => t('Title of result set'),
+  );
+  $form['metadata_stream'] = array(
+    '#type' => 'select',
+    '#title' => t('Metadata Stream'),
+    '#options' => drupal_map_assoc(array(t('DC'), t('MODS'))),
+    '#description' => t('Select the metadata stream to analyze.'),
+  );
+  $form['collection_pid'] = array(
+    '#type' => 'textfield',
+    '#size' => 30,
+    '#required' => TRUE,
+    '#title' => t('PID of collection to analyze'),
+  );
+
+ $form['capture_options'] = array(
+  '#type' => 'checkboxes',
+  '#options' => array('data' => 'Capture field data', 'pids' => 'Capture PIDs'),
+  '#title' => t('Capture Options'),
+ );
+
+  $form['capture_fields'] = array(
+    '#type' => 'textarea',
+    '#cols' => 128,
+    '#rows' => 5,
+    '#required' => FALSE,
+    '#title' => t('Comma separated list of top level elements to capture'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'submit',
+  );
+return $form;
+}
+
+function islandora_metadata_analyzer_form_validate($form, &$form_state){
+  
+//      form_set_error('price', t('Please add a collection PID'));
+
+}
+
+function islandora_metadata_analyzer_form_submit($form, &$form_state){
+
+$stream = $form_state['values']['metadata_stream'];
+$collection_pid = $form_state['values']['collection_pid'];
+$result_set_title = $form_state['values']['result_set_title'];
+$capture_fields = $form_state['values']['capture_fields'];
+$capture_options = $form_state['values']['capture_options'];
+$params = array('capture_options' => $capture_options, 'capture_fields' => $capture_fields, 'result_set_title' => $result_set_title);  
+drupal_set_message(t('form submitted'));
+
+module_load_include('inc', 'islandora_metadata_analyzer', 'includes/analyzer');
+
+//$result = islandora_metadata_analyzer($collection_pid, $stream);
+islandora_metadata_analyzer($collection_pid, $stream, $params);
+
+return $form;
+
+}
+
+
+
