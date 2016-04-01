@@ -230,13 +230,13 @@ function islandora_metadata_analyzer_form($form, &$form_state){
     '#required' => TRUE,
     '#title' => t('PID of collection to analyze'),
   );
-
+/*
  $form['capture_options'] = array(
   '#type' => 'checkboxes',
   '#options' => array('data' => 'Capture field data', 'pids' => 'Capture PIDs'),
   '#title' => t('Capture Options'),
  );
-
+*/
   $form['capture_fields'] = array(
     '#type' => 'textarea',
     '#cols' => 128,
