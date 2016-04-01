@@ -86,7 +86,6 @@ $query->execute();
 
 function islandora_metadata_analyzer_save_analyzer_data($result_id, $data){
 
-
 foreach($data as $path => $metadata){
 
   $path_id = db_insert('islandora_metadata_analyzer_paths') // Table name no longer needs {}
@@ -96,24 +95,27 @@ foreach($data as $path => $metadata){
   ))
   ->execute();
 
+  $tmp_data = array();
     foreach($metadata as $data_val => $pids){
       $path_data_id = db_insert('islandora_metadata_analyzer_path_data') // Table name no longer needs {}
         ->fields(array(
         'path_id' => $path_id,
         'path_data' => substr($data_val, 0, 126),
-      ))
+		       ))
       ->execute();
-      dpm($path_id . " : " . $data_val);
+      $tmp_data[$path_data_id] = $pids;
     }
+
+    foreach($tmp_data as $path_data_key => $pids){
       foreach($pids as $pid){
         $path_id = db_insert('islandora_metadata_analyzer_data_pids') // Table name no longer needs {}
           ->fields(array(
-          'path_data_id' => $path_data_id,
+          'path_data_id' => $path_data_key,
           'pid' => $pid,
         ))
         ->execute();
       }
-
+    }
 }
 
 }
