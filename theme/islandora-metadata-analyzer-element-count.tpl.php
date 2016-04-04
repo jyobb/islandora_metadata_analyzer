@@ -2,7 +2,7 @@
 
   //dpm($variables);
   //dpm($variables['countArray']);
-
+  
 
 ?>
 
@@ -30,9 +30,14 @@ foreach( $variables['countArray'] as $k => $v) {
 foreach( $variables['path_data'] as $path ){
 
   $link = l(t($path['path']), 'islandora_metadata_analyzer/ajax-path/nojs/' . $path['path_id'], array('attributes' => array('class' => array('use-ajax'))));
-echo '<div class="path-' . $path['path_id'] .'">' . $link. '</div><div id="pathdata-' . $path['path_id'] . '"></div>';
- 
+  echo '<div class="path-container">';
+  echo '<div class="path-' . $path['path_id'] . '">' . $link. '</div><div id="pathdata-' . $path['path_id'] . '"></div>';
+echo '</div>'; 
 }
+
+
+
+
 
 
 ?>
@@ -44,7 +49,13 @@ echo '<div class="path-' . $path['path_id'] .'">' . $link. '</div><div id="pathd
 <?php 
 
 function getElement($k, &$element, &$out, $d){
+
   $out .= '<div class="elem-' . $d .'"><div class="elem-elem">' . $k . '</div><div class="elem-sub"><div id="count-' . $d .'">Count: ' . $element['count'] . '</div>';
+  /*
+  $output = '<div class="elem-' . $d .'"><div class="elem-elem">' . $k . '</div><div class="elem-sub"><div id="count-' . $d .'">Count: ' . $element['count'] . '</div>';
+  $options = array('handle' => $k, 'content' => $output, 'collapsed' => TRUE);
+  $out .= theme('ctools_collapsible',$options);
+  */
   if(!empty($element['attributes'])){
     doAttributes($k, $element['attributes'], $out, $d);
     }

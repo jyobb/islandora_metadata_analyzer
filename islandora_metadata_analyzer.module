@@ -7,12 +7,12 @@
 
 /**
  * Implements hook_init().
+ * Add ajax and javascript
  */
 function islandora_metadata_analyzer_init(){
   drupal_add_js('misc/jquery.form.js');
   drupal_add_library('system', 'drupal.ajax');
 }
-
 
 /**
  * Implements hook_menu().
@@ -25,6 +25,7 @@ function islandora_metadata_analyzer_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_metadata_analyzer_form'),
     'access arguments' => array('administer site configuration'),
+    'expanded' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
   $items['metadata_analyzer/results'] = array(
@@ -34,6 +35,14 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['metadata_analyzer/searchReplace'] = array(
+    'title' => 'Islandora Metadata Search Replace',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_metadata_analyzer_search_replace_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
   $items['metadata_analyzer/elementCount'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_element_counts',
@@ -42,24 +51,13 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_CALLBACK,
   );  
-/*  
-  $items['metadata_analyzer/ajax-path/%/%'] = array(
-    'title' => 'Collection Element Analysis Results',
-    'page callback' => 'islandora_metadata_analyzer_path_ajax',
-    'page arguements' => array(2, 3),
-    'access callback' => TRUE,
-    //'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-*/
-$items['islandora_metadata_analyzer/ajax-path'] = array(
+  $items['islandora_metadata_analyzer/ajax-path'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_path_ajax',
     'access callback' => TRUE,
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-
   $items['islandora_metadata_analyzer/ajax-data'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_data_ajax',
@@ -67,7 +65,6 @@ $items['islandora_metadata_analyzer/ajax-path'] = array(
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-
   $items['islandora_metadata_analyzer/downloads'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_download_pids',
@@ -79,7 +76,6 @@ $items['islandora_metadata_analyzer/ajax-path'] = array(
 
   return $items;
 }
-
 
 /*
  * @params database id of metadata entry in islandora_metadata_analyzer_path_data table
@@ -106,9 +102,14 @@ function islandora_metadata_analyzer_download_pids($path_data_id){
 
 }
 
+/*
+ * @params queryType path_id for data
+ *
+ * Ajax function that updates page with pids
+ * 
+ */
 function islandora_metadata_analyzer_data_ajax($type='ajax', $path_data_id=0){
   $output = islandora_metadata_analyzer_load_data_data($path_data_id);
-//dpm("ion");
   
   if($type == 'ajax'){
     $commands = array();
@@ -119,6 +120,13 @@ function islandora_metadata_analyzer_data_ajax($type='ajax', $path_data_id=0){
 
 }
 
+
+/*
+ * @params path_data_id for data
+ *
+ * Ajax helper function that retrieves data pids
+ *
+ */
 function islandora_metadata_analyzer_load_data_data($path_data_id){
 
 $data_data = db_query("select * from {islandora_metadata_analyzer_data_pids} p where p.path_data_id = :path_data_id", array(":path_data_id" => $path_data_id)); 
@@ -129,13 +137,14 @@ foreach($data_data as $data_content){
 return $out;
 }
 
-
-
-
+/*
+ * @params queryType path_id for data
+ *
+ * Ajax function that updates page with element data
+ * 
+ */
 function islandora_metadata_analyzer_path_ajax($type='ajax', $path_id=0){
   $output = islandora_metadata_analyzer_load_path_data($path_id);
-  //$output = "<div>test</div>";
-//dpm("ion");
   
   if($type == 'ajax'){
     $commands = array();
@@ -146,6 +155,12 @@ function islandora_metadata_analyzer_path_ajax($type='ajax', $path_id=0){
 
 }
 
+/*
+ * @params path_id for data
+ *
+ * Ajax helper function that retrieves data data
+ *
+ */
 function islandora_metadata_analyzer_load_path_data($path_id){
 
 $path_data = db_query("select * from {islandora_metadata_analyzer_path_data} p where p.path_id = :path_id", array(":path_id" => $path_id)); 
@@ -161,9 +176,12 @@ foreach($path_data as $path_content){
 return $out;
 }
 
-
-
-
+/*
+ * implements hook_theme
+ *
+ * Theme functions for output
+ *
+ */
 function islandora_metadata_analyzer_theme($existing, $type, $theme, $path) {
     return array(
         'results_list' => array(
@@ -189,17 +207,20 @@ function islandora_metadata_analyzer_theme($existing, $type, $theme, $path) {
     );
 }
 
-
-
-
-/** Optional callback to manipulate and set variables */
+/*
+ *  stub callback to manipulate and set variables for theme
+ */
 function template_preprocess_results_list(&$vars) {
   // This variable will be available in the template file as $custom_value
 
 }
 
-
-/** Optional callback to manipulate and set variables */
+/*
+ * Implements template_preprocess_hook
+ *
+ * Unserialize array for theme
+ *
+ */
 function template_preprocess_element_count(&$vars) {
   //unserialize object
   $vars['countArray'] = unserialize($vars['countArray']);
@@ -207,10 +228,89 @@ function template_preprocess_element_count(&$vars) {
 
 
 
+/*
+ * implements hook_form()
+ * @params $form form_state
+ *
+ * Form for selecting repair parameters
+ *
+ */
+function islandora_metadata_analyzer_search_replace_form($form, &$form_state){
+
+  $form['metadata_stream'] = array(
+    '#type' => 'select',
+    '#title' => t('Metadata Stream'),
+    '#options' => drupal_map_assoc(array(t('DC'), t('MODS'))),
+    '#description' => t('Select the metadata stream to analyze.'),
+  );
+  $form['path_to_element'] = array(
+    '#type' => 'textfield',
+    '#size' => 100,
+    '#required' => TRUE,
+    '#title' => t('Path to Element'),
+  );
+  $form['old_data'] = array(
+    '#type' => 'textfield',
+    '#size' => 60,
+    '#required' => TRUE,
+    '#title' => t('Old Data'),
+  );
+  $form['new_data'] = array(
+    '#type' => 'textfield',
+    '#size' => 60,
+    '#required' => TRUE,
+    '#title' => t('New Data'),
+  );
+  $form['pid_list'] = array(
+    '#type' => 'textfield',
+    '#size' => 100,
+    '#required' => TRUE,
+    '#title' => t('PIDs to Repair'),
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'submit',
+  );
+
+return $form;
+
+}
+
+/*
+ * implements hook_submit
+ *
+ * Collect input and pass to processing functions
+ *
+ */
+function islandora_metadata_analyzer_search_replace_form_submit($form, &$form_state){
+
+
+$params = array('stream' => $form_state['values']['metadata_stream'], 
+                'path' => $form_state['values']['path_to_element'],
+                'old_data' => $form_state['values']['old_data'],
+                'new_data' => $form_state['values']['new_data'],
+                'pid_list' => $form_state['values']['pid_list'],
+               );  
+
+module_load_include('inc', 'islandora_metadata_analyzer', 'includes/search_replace');
+
+islandora_metadata_analyzer_search_replace($params);
+
+return $form;
+
+}
+
+
+/*
+ * implements hook_form()
+ * @params $form form_state
+ *
+ * Form for selecting analysis parameters
+ *
+ */
 function islandora_metadata_analyzer_form($form, &$form_state){
   $form['results_link'] = array(
     '#markup' => '<a href="metadata_analyzer/results">View Results</a>',
-    //'#value' => 
   );
   $form['result_set_title'] = array(
     '#type' => 'textfield',
@@ -230,13 +330,6 @@ function islandora_metadata_analyzer_form($form, &$form_state){
     '#required' => TRUE,
     '#title' => t('PID of collection to analyze'),
   );
-/*
- $form['capture_options'] = array(
-  '#type' => 'checkboxes',
-  '#options' => array('data' => 'Capture field data', 'pids' => 'Capture PIDs'),
-  '#title' => t('Capture Options'),
- );
-*/
   $form['capture_fields'] = array(
     '#type' => 'textarea',
     '#cols' => 128,
@@ -252,12 +345,20 @@ function islandora_metadata_analyzer_form($form, &$form_state){
 return $form;
 }
 
+/*
+ * hook_validata stub
+ *
+ */
 function islandora_metadata_analyzer_form_validate($form, &$form_state){
   
-//      form_set_error('price', t('Please add a collection PID'));
-
 }
 
+/*
+ * implements hook_submit
+ *
+ * Collect input and pass to processing functions
+ *
+ */
 function islandora_metadata_analyzer_form_submit($form, &$form_state){
 
 $stream = $form_state['values']['metadata_stream'];
@@ -270,7 +371,6 @@ drupal_set_message(t('form submitted'));
 
 module_load_include('inc', 'islandora_metadata_analyzer', 'includes/analyzer');
 
-//$result = islandora_metadata_analyzer($collection_pid, $stream);
 islandora_metadata_analyzer($collection_pid, $stream, $params);
 
 return $form;

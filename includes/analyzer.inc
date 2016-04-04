@@ -49,7 +49,7 @@ foreach ($results as $result) {
   } else {
     if($stream == 'DC'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/DC_analyzer');
-      islandora_DC_metadata_analyzer($fedoraObject, $analysis_results);              
+      islandora_DC_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
     }elseif($stream == 'MODS'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/MODS_analyzer');
       islandora_MODS_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
@@ -68,6 +68,12 @@ islandora_metadata_analyzer_save_analyzer_data($result_id, $data);
 
 }
 
+/*
+ * @params results_id pid_list
+ *
+ * Save list of all pids processed
+ *
+ */ 
 function islandora_metadata_analyzer_save_query_pids($result_id, $pid_list){
 
 $values = array();
@@ -83,7 +89,12 @@ $query->execute();
 
 }
 
-
+/*
+ * @params result_id data
+ *
+ * Save path info, metadata, and pids to 3 separate database tables.
+ *
+ */
 function islandora_metadata_analyzer_save_analyzer_data($result_id, $data){
 
 foreach($data as $path => $metadata){
@@ -120,10 +131,12 @@ foreach($data as $path => $metadata){
 
 }
 
-
-
-
-
+/*
+ * @params analysis_results, result_set_title, pid, start_time, count
+ *
+ * Save analysis array to database 
+ *
+ */
 function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $result_set_title, $pid, $start_time, $count){
 
 $end_time = microtime(true);
@@ -144,6 +157,11 @@ return $result_id;
 
 }
 
+/*
+ * @params duration
+ *
+ * Reformat microsecond time
+ */
 function microtimeFormat($duration)
 {
     $hours = (int)($duration/60/60);
