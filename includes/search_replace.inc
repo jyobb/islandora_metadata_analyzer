@@ -17,8 +17,9 @@ function islandora_metadata_analyzer_search_replace($params){
   $pid_list = explode(',',$params['pid_list']);
   $path_parts = explode("@", $path);
 
+
   foreach ($pid_list as $pid) {
-    $fedoraObject = islandora_object_load($pid);
+    $fedoraObject = islandora_object_load(trim($pid));
 
     if($stream == 'DC'){
 
@@ -26,6 +27,7 @@ function islandora_metadata_analyzer_search_replace($params){
       $xml = simplexml_load_string($dc, "SimpleXMLElement", null, 'dc', true);
 
     }elseif($stream == 'MODS'){
+
       $datastream = $fedoraObject['MODS']->content;
       $dom = new DOMDocument();
       $xml = $dom->loadXML($datastream);	   
@@ -54,7 +56,7 @@ function islandora_metadata_analyzer_search_replace($params){
     $nodeXPath->registerNamespace($prefix, $namespace);    
     
     //Build xpath qeury string
-    $base_path = '/mods' . $path_parts[0];
+    $base_path = $path_parts[0];
     $xpathPath = str_replace("/", "/" . $prefix . ":", $base_path);
     
     //Perform query

@@ -11,7 +11,8 @@ $datastream = $object['MODS']->content;
 //$xml = simplexml_load_string($datastream, null, null, 'mods', true);
 $sxe = simplexml_load_string($datastream, 'SimpleXMLIterator');
 module_load_include('inc', 'islandora_metadata_analyzer', 'includes/processors');
-newprocessDocument($sxe, $object->id, $results, $data, NULL, $params);
+$params['stream_root'] = '/mods/';
+newprocessDocument($sxe, $object->id, $results, $data, '/mods', $params);
 
 return;
 

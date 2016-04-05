@@ -12,7 +12,7 @@ function islandora_metadata_analyzer($pid, $stream, $params){
 
   $title = $params['result_set_title'];
   $capture_fields_string = $params['capture_fields'];
-  $capture_options = $params['capture_options'];
+  //$capture_options = $params['capture_options'];
   $capture_fields = explode(',', $capture_fields_string);
 
   $collections = array('islandora:collectionCModel', 'islandora:bookCModel');
@@ -52,6 +52,7 @@ foreach ($results as $result) {
       islandora_DC_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
     }elseif($stream == 'MODS'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/MODS_analyzer');
+
       islandora_MODS_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
      
     }
