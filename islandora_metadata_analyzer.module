@@ -246,24 +246,28 @@ function islandora_metadata_analyzer_search_replace_form($form, &$form_state){
   $form['path_to_element'] = array(
     '#type' => 'textfield',
     '#size' => 100,
+    '#default_value' => '/subject/hierarchicalGeographic/citySection@',
     '#required' => TRUE,
     '#title' => t('Path to Element'),
   );
   $form['old_data'] = array(
     '#type' => 'textfield',
     '#size' => 60,
+    '#default_value' => 'university',
     '#required' => TRUE,
     '#title' => t('Old Data'),
   );
   $form['new_data'] = array(
     '#type' => 'textfield',
     '#size' => 60,
+    '#default_value' => 'University',
     '#required' => TRUE,
     '#title' => t('New Data'),
   );
   $form['pid_list'] = array(
     '#type' => 'textfield',
     '#size' => 100,
+    '#default_value' => 'islandora:43',
     '#required' => TRUE,
     '#title' => t('PIDs to Repair'),
   );
