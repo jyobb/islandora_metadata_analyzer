@@ -50,7 +50,15 @@ function islandora_metadata_analyzer_menu() {
     'file' => 'includes/analyzerViews.inc',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_CALLBACK,
-  );  
+  );
+  $items['metadata_analyzer/populateSearchReplace'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_populate_form',
+    'page arguements' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
   $items['islandora_metadata_analyzer/ajax-path'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_path_ajax',
@@ -155,6 +163,12 @@ function islandora_metadata_analyzer_path_ajax($type='ajax', $path_id=0){
 
 }
 
+
+function islandora_metadata_analyzer_populate_form(){
+
+}
+
+
 /*
  * @params path_id for data
  *
@@ -169,9 +183,13 @@ foreach($path_data as $path_content){
 
   $link = l(t($path_content->path_data), 'islandora_metadata_analyzer/ajax-data/nojs/' . $path_content->path_data_id, array('attributes' => array('class' => array('use-ajax'))));
 
-  $downloadlink = l(t("Download PIDS for " . $path_content->path_data), 'islandora_metadata_analyzer/downloads/' . $path_content->path_data_id );
+  $downloadlink = l(t($path_content->path_data), 'islandora_metadata_analyzer/downloads/' . $path_content->path_data_id );
 
-  $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . '</div><div id="datadata-' . $path_content->path_data_id . '"></div><div>' . $downloadlink . '</div>';
+
+//  $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . '</div><div id="datadata-' . $path_content->path_data_id . '"></div><div>' . $downloadlink . '</div>';
+
+  $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . ' Download PIDs for: ' . $downloadlink . '</div><div id="datadata-' . $path_content->path_data_id . '"></div>';
+
 }
 return $out;
 }
