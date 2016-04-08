@@ -17,7 +17,7 @@ function islandora_metadata_analyzer_results(){
 
 function islandora_metadata_analyzer_element_counts($result_id){
 
-  $result = db_query("SELECT result_id, title, element_data, pid, query_time, record_count FROM {islandora_metadata_analyzer_results} where result_id = :result_id", array(":result_id" => $result_id))->fetchObject();
+  $result = db_query("SELECT result_id, title, element_data, pid, query_time, record_count, stream FROM {islandora_metadata_analyzer_results} where result_id = :result_id", array(":result_id" => $result_id))->fetchObject();
 
   //$data_result = db_query("select pd.path_id, p.path, pd.path_data, pd.path_data_id, pidd.pid_id, pidd.pid from {islandora_metadata_analyzer_paths} p, {islandora_metadata_analyzer_path_data} pd, {islandora_metadata_analyzer_data_pids} pidd where pd.path_id = p.path_id and pidd.path_data_id = pd.path_data_id and p.result_id = :result_id", array(":result_id" => $result_id));
 
@@ -34,7 +34,7 @@ foreach($data_result as $td){
 
 //dpm($theme_data);
 
-  $output = theme('element_count', array('result_id' => $result->result_id, 'title' => $result->title, 'pid' => $result->pid, 'query_time' => $result->query_time, 'countArray' => $result->element_data, 'record_count' => $result->record_count, 'path_data' => $theme_data));
+  $output = theme('element_count', array('result_id' => $result->result_id, 'title' => $result->title, 'pid' => $result->pid, 'query_time' => $result->query_time, 'countArray' => $result->element_data, 'record_count' => $result->record_count, 'stream' => $result->stream, 'path_data' => $theme_data));
 
  return $output;
 }

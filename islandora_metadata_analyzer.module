@@ -216,6 +216,7 @@ function islandora_metadata_analyzer_theme($existing, $type, $theme, $path) {
               'pid' => NULL,
               'query_time' => NULL,
               'countArray' => NULL,
+              'stream' => NULL,
               'record_count' => NULL,
               'path_data' => NULL,
             ),
@@ -387,13 +388,16 @@ $stream = $form_state['values']['metadata_stream'];
 $collection_pid = $form_state['values']['collection_pid'];
 $result_set_title = $form_state['values']['result_set_title'];
 $capture_fields = $form_state['values']['capture_fields'];
-//$capture_options = $form_state['values']['capture_options'];
-$params = array('capture_fields' => $capture_fields, 'result_set_title' => $result_set_title);  
-drupal_set_message(t('form submitted'));
+
+$params = array('capture_fields' => $capture_fields, 
+                'result_set_title' => $result_set_title, 
+                'stream' => $stream, 
+                'pid' => $collection_pid);  
+
 
 module_load_include('inc', 'islandora_metadata_analyzer', 'includes/analyzer');
 
-islandora_metadata_analyzer($collection_pid, $stream, $params);
+islandora_metadata_analyzer($params);
 
 return $form;
 

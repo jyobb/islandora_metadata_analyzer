@@ -8,15 +8,18 @@
  * Send result to datastream specific analyzer function
  *
  */
-function islandora_metadata_analyzer($pid, $stream, $params){
+function islandora_metadata_analyzer($params){
 
   $title = $params['result_set_title'];
+  $pid = $params['pid'];
+  $stream = $params['stream'];
   $capture_fields_string = $params['capture_fields'];
-  //$capture_options = $params['capture_options'];
-  $capture_fields = explode(',', $capture_fields_string);
 
+  $capture_fields = explode(',', $capture_fields_string);
   $collections = array('islandora:collectionCModel', 'islandora:bookCModel');
   $start_time = microtime(true);
+
+  $params['start_time'] = $start_time;
 
   $query = <<<EOQ
   SELECT ?pid FROM <#ri>
@@ -37,6 +40,7 @@ EOQ;
                              
   $analysis_results = array();
   $data = array();
+
 
 $pid_list = array();
 
@@ -61,7 +65,8 @@ foreach ($results as $result) {
 }
 
 
-$result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $title, $pid, $start_time, $sparql_count);
+//$result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $title, $pid, $start_time, $sparql_count);
+$result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $params, $sparql_count);
 
 islandora_metadata_analyzer_save_query_pids($result_id, $pid_list);
 
@@ -138,7 +143,13 @@ foreach($data as $path => $metadata){
  * Save analysis array to database 
  *
  */
-function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $result_set_title, $pid, $start_time, $count){
+//function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $result_set_title, $pid, $start_time, $count){
+function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $params, $count){
+
+$result_set_title = $params['result_set_title'];
+$pid = $params['pid'];
+$start_time = $params['start_time'];
+$stream = $params['stream'];
 
 $end_time = microtime(true);
 $query_time = $end_time - $start_time;
@@ -148,6 +159,7 @@ $result_id = db_insert('islandora_metadata_analyzer_results') // Table name no l
   ->fields(array(
   'query_time' => $nice_time,
   'pid' => $pid,
+  'stream' => $stream,
   'title' => $result_set_title,
   'element_data' => serialize($analysis_results),
   'record_count' => $count,
