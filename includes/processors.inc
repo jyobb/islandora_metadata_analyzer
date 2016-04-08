@@ -9,7 +9,7 @@ function newprocessDocument($sxe, $pid, &$results, &$data, $key=NULL, &$params){
 
  
   for ($sxe->rewind(); $sxe->valid(); $sxe->next()) {
-
+//dpm($pid . " : " . $key);
     $path = $key . "/" . $sxe->key(); 
 
     newprocessElement($sxe, $results, $data, $pid, $path, $params);
@@ -56,7 +56,7 @@ function newprocessElement($elementIterator, &$results, &$data, $pid, $path, &$p
    // this is where the actual element value and pids
    // are caputured
    // Test to see we have an element value  
-  if(isset($element_value) && $element_value != ''){
+  if(isset($element_value) && $element_value != '' && !empty($capture_fields)){
 
     // Test to see if we want this field
     foreach($capture_fields as $field){
