@@ -48,6 +48,13 @@ $schema['islandora_metadata_analyzer_results'] = array(
         'not null' => TRUE,
         'default' => 0,
       ),
+      'stream' => array(
+        'description' => t('Metadata stream processed'), 
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'default' => 'no stream',
+      ),
     ),
     'primary key' => array('result_id'),
   );
@@ -155,13 +162,57 @@ $schema['islandora_metadata_analyzer_pids'] = array(
         'default' => 'nodata', 
       ),
     ),
-
 );
 
 
 
+$schema['islandora_metadata_analyzer_all_paths'] = array(
+    'description' => t('Storage area for results.'),
+    'fields' => array(
+      'path_id' => array(
+        'description' => 'The primary identifier for each path.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'result_id' => array(
+        'description' => t('Key to parent result set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'path' => array(
+        'description' => t('Metadata Path'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nopath', 
+      ),
+    ),
+    'primary key' => array('path_id'),
+);
 
+$schema['islandora_metadata_analyzer_all_pids'] = array(
+    'description' => t('Storage area for PID for each element'),
+    'fields' => array(
+      'path_id' => array(
+        'description' => t('Key to parent path set'), 
+        'type' => 'int', 
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0', 
+      ),
+      'pid' => array(
+        'description' => t('PIDs looked at in analysis'), 
+        'type' => 'varchar', 
+        'length' => 128, 
+        'not null' => TRUE,
+        'default' => 'nodata', 
+      ),
+    ),
 
+);
 
 
 
@@ -172,12 +223,12 @@ return $schema;
 /*
 function islandora_metadata_analyzer_update_7100() {
 
- db_add_field('islandora_metadata_analyzer_results', 'record_count', array(
-        'description' => t('Count of Records Processed'), 
-       'type' => 'int',
-        'unsigned' => TRUE,
+ db_add_field('islandora_metadata_analyzer_results', 'stream', array(
+        'description' => t('Metadata stream processed'), 
+        'type' => 'varchar',
+        'length' => '32',
         'not null' => TRUE,
-        'default' => 0,)
+        'default' => 'no stream',)
  );
 
 }

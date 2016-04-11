@@ -40,7 +40,7 @@ EOQ;
                              
   $analysis_results = array();
   $data = array();
-
+  $path_data = array();
 
 $pid_list = array();
 
@@ -57,22 +57,26 @@ foreach ($results as $result) {
     }elseif($stream == 'MODS'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/MODS_analyzer');
 
-      islandora_MODS_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
+      islandora_MODS_metadata_analyzer($fedoraObject, $analysis_results, $data, $params, $path_data);              
      
     }
   }
 
 }
 
+dpm($path_data);
 
-//$result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $title, $pid, $start_time, $sparql_count);
 $result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $params, $sparql_count);
 
 islandora_metadata_analyzer_save_query_pids($result_id, $pid_list);
 
+//Check to see if they saved data first
 islandora_metadata_analyzer_save_analyzer_data($result_id, $data);
 
+islandora_metadata_analyzer_save_path_data($result_id, $path_data);
+
 }
+
 
 /*
  * @params results_id pid_list
