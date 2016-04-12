@@ -38,7 +38,7 @@ Navigate to the collection analysis page using the link in the right navigation 
 4. Select the fields to capture
 
 ##Status
-
+Drush not working
 Currently does not look at books or subcollections.
 
 
