@@ -39,7 +39,6 @@ Navigate to the collection analysis page using the link in the right navigation 
 
 ##Status
 
-Needs code comments
 Currently does not look at books or subcollections.
-Will work with MODS DC is next
+
 
