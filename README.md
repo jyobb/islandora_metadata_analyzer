@@ -4,7 +4,10 @@ Islandora module for inspecting collection metadata
 
 ## Introduction
 
-This module allows administrators to analyze the metadata for a collection to find inconsistencies.  It aggregates the metadata for all items in a collection into a format that allows analysis.  It also allows users to download a CSV file of islandora PIDS for with metadata elements in common.  For example, all PIDS that have a specific subject.
+This module allows administrators to analyze MODS or DC metadata for a collection to find inconsistencies.  It aggregates the metadata for all items in a collection into a format that allows analysis. All unique paths within a metadata stream are displayed with links to to either view or download the list of pids in the collection that have or do not have this element. This allows you to check whether all metadata records have specific fields.
+
+This module also allows you to capture the contents of a top level xml element and its children.  This is useful for ensuring consistency of your metadata. A CSV list of pids for each metadata value is viewable or downloadable so you can find objects that need repair. 
+
 
 ## Requirement
 
