@@ -42,7 +42,6 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
-
   $items['metadata_analyzer/elementCount'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_element_counts',
@@ -63,6 +62,7 @@ function islandora_metadata_analyzer_menu() {
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_path_ajax',
     'access callback' => TRUE,
+    'file' => 'includes/ajax.inc',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
@@ -70,6 +70,7 @@ function islandora_metadata_analyzer_menu() {
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_data_ajax',
     'access callback' => TRUE,
+    'file' => 'includes/ajax.inc',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
@@ -77,122 +78,49 @@ function islandora_metadata_analyzer_menu() {
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_download_pids',
     'page arguements' => array(1),
+    'file' => 'includes/ajax.inc',
     'access callback' => TRUE,
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-
+  $items['islandora_metadata_analyzer/ajax-allpath'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_allpath_ajax',
+    'access callback' => TRUE,
+    'file' => 'includes/ajax.inc',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['islandora_metadata_analyzer/piddownloads'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_download_all_pids',
+    'page arguements' => array(1),
+    'file' => 'includes/ajax.inc',
+    'access callback' => TRUE,
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['islandora_metadata_analyzer/ajax-allpathmissing'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_allpath_missing_ajax',
+    'access callback' => TRUE,
+    'file' => 'includes/ajax.inc',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['islandora_metadata_analyzer/missingpiddownloads'] = array(
+    'title' => 'Collection Element Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_download_all_missing_pids',
+    'page arguements' => array(1),
+    'file' => 'includes/ajax.inc',
+    'access callback' => TRUE,
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
-/*
- * @params database id of metadata entry in islandora_metadata_analyzer_path_data table
- *
- * Query database for list of pids and send file to user
- *
- */
-function islandora_metadata_analyzer_download_pids($path_data_id){
 
-  $data_title = db_query("select * from {islandora_metadata_analyzer_path_data}  where path_data_id = :path_data_id", array(":path_data_id" => $path_data_id))->fetchObject(); 
-
-  $data_data = db_query("select * from {islandora_metadata_analyzer_data_pids} where path_data_id = :path_data_id", array(":path_data_id" => $path_data_id)); 
-
-  $out = "";
-  foreach($data_data as $data_content){
-    $out.= $data_content->pid_id . ', ';
-  }
-
-  header("Content-Type: text/plain"); //the content type that I am exporting
-  header("Content-Disposition: Attachment; filename=". $data_title->path_data);
-  header("Pragma: no-cache"); //I don't want this to be cached because it is constantly changing
-  echo $out;
-  exit(0);
-
-}
-
-/*
- * @params queryType path_id for data
- *
- * Ajax function that updates page with pids
- * 
- */
-function islandora_metadata_analyzer_data_ajax($type='ajax', $path_data_id=0){
-  $output = islandora_metadata_analyzer_load_data_data($path_data_id);
-  
-  if($type == 'ajax'){
-    $commands = array();
-    $commands[] = ajax_command_replace('#datadata-'.$path_data_id, $output);
-    $page = array('#type' => 'ajax', '#commands' => $commands);
-    ajax_deliver($page);
-  } 
-
-}
-
-
-/*
- * @params path_data_id for data
- *
- * Ajax helper function that retrieves data pids
- *
- */
-function islandora_metadata_analyzer_load_data_data($path_data_id){
-
-$data_data = db_query("select * from {islandora_metadata_analyzer_data_pids} p where p.path_data_id = :path_data_id", array(":path_data_id" => $path_data_id)); 
-$out = "";
-foreach($data_data as $data_content){
-  $out.= '<div id="datadata-' . $data_content->pid_id . '">' . $data_content->pid . '</div>';
-}
-return $out;
-}
-
-/*
- * @params queryType path_id for data
- *
- * Ajax function that updates page with element data
- * 
- */
-function islandora_metadata_analyzer_path_ajax($type='ajax', $path_id=0){
-  $output = islandora_metadata_analyzer_load_path_data($path_id);
-  
-  if($type == 'ajax'){
-    $commands = array();
-    $commands[] = ajax_command_replace('#pathdata-'.$path_id, $output);
-    $page = array('#type' => 'ajax', '#commands' => $commands);
-    ajax_deliver($page);
-  } 
-
-}
-
-
-function islandora_metadata_analyzer_populate_form(){
-
-}
-
-
-/*
- * @params path_id for data
- *
- * Ajax helper function that retrieves data data
- *
- */
-function islandora_metadata_analyzer_load_path_data($path_id){
-
-$path_data = db_query("select * from {islandora_metadata_analyzer_path_data} p where p.path_id = :path_id", array(":path_id" => $path_id)); 
-$out = "";
-foreach($path_data as $path_content){
-
-  $link = l(t($path_content->path_data), 'islandora_metadata_analyzer/ajax-data/nojs/' . $path_content->path_data_id, array('attributes' => array('class' => array('use-ajax'))));
-
-  $downloadlink = l(t($path_content->path_data), 'islandora_metadata_analyzer/downloads/' . $path_content->path_data_id );
-
-
-//  $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . '</div><div id="datadata-' . $path_content->path_data_id . '"></div><div>' . $downloadlink . '</div>';
-
-  $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . ' Download PIDs for: ' . $downloadlink . '</div><div id="datadata-' . $path_content->path_data_id . '"></div>';
-
-}
-return $out;
-}
 
 /*
  * implements hook_theme
@@ -242,7 +170,7 @@ function template_preprocess_results_list(&$vars) {
  */
 function template_preprocess_element_count(&$vars) {
   //unserialize object
-  $vars['countArray'] = unserialize($vars['countArray']);
+  //$vars['countArray'] = unserialize($vars['countArray']);
 }
 
 

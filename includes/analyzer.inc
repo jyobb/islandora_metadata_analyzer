@@ -53,7 +53,8 @@ foreach ($results as $result) {
   } else {
     if($stream == 'DC'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/DC_analyzer');
-      islandora_DC_metadata_analyzer($fedoraObject, $analysis_results, $data, $params);              
+
+      islandora_DC_metadata_analyzer($fedoraObject, $analysis_results, $data, $params, $path_data);              
     }elseif($stream == 'MODS'){
       module_load_include('inc', 'islandora_metadata_analyzer', 'includes/MODS_analyzer');
 
@@ -64,7 +65,6 @@ foreach ($results as $result) {
 
 }
 
-dpm($path_data);
 
 $result_id = islandora_metadata_analyzer_save_analyzer_results($analysis_results, $params, $sparql_count);
 
@@ -74,6 +74,7 @@ islandora_metadata_analyzer_save_query_pids($result_id, $pid_list);
 islandora_metadata_analyzer_save_analyzer_data($result_id, $data);
 
 islandora_metadata_analyzer_save_path_data($result_id, $path_data);
+
 
 }
 
@@ -98,6 +99,43 @@ foreach ($values as $record) {
 $query->execute();
 
 }
+
+
+
+/*
+ * @params result_id path_data
+ *
+ * Save path info and pids to 2 separate database tables.
+ *
+ */
+function islandora_metadata_analyzer_save_path_data($result_id, $data){
+
+foreach($data as $path => $metadata){
+
+  $path_id = db_insert('islandora_metadata_analyzer_all_paths')
+    ->fields(array(
+    'result_id' => $result_id,
+    'path' => $path,
+  ))
+  ->execute();
+
+    foreach($metadata as $data_val){
+      $path_data_id = db_insert('islandora_metadata_analyzer_all_pids')
+        ->fields(array(
+        'path_id' => $path_id,
+        'pid' => substr($data_val, 0, 126),
+		       ))
+      ->execute();
+    }
+
+}
+
+}
+
+
+
+
+
 
 /*
  * @params result_id data
@@ -149,6 +187,7 @@ foreach($data as $path => $metadata){
  */
 //function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $result_set_title, $pid, $start_time, $count){
 function islandora_metadata_analyzer_save_analyzer_results($analysis_results, $params, $count){
+  //function islandora_metadata_analyzer_save_analyzer_results($params, $count){
 
 $result_set_title = $params['result_set_title'];
 $pid = $params['pid'];
