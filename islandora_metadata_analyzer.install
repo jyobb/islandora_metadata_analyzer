@@ -1,5 +1,76 @@
 <?php
 
+
+/**
+ * Implements hook_install().
+ */
+function islandora_metadata_analyzer_install() {
+  // Make real foreign keys.
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_paths}
+    ADD CONSTRAINT {islandora_metadata_analyzer_results}
+    FOREIGN KEY (result_id) REFERENCES {islandora_metadata_analyzer_results} (result_id) ON DELETE CASCADE
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_path_data}
+    ADD CONSTRAINT {islandora_metadata_analyzer_paths}
+    FOREIGN KEY (path_id) REFERENCES {islandora_metadata_analyzer_paths} (path_id) ON DELETE CASCADE
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_data_pids}
+    ADD CONSTRAINT {islandora_metadata_analyzer_path_data}
+    FOREIGN KEY (path_data_id) REFERENCES {islandora_metadata_analyzer_path_data} (path_data_id) ON DELETE CASCADE
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_all_pids}
+    ADD CONSTRAINT {islandora_metadata_analyzer_all_paths}
+    FOREIGN KEY (path_id) REFERENCES {islandora_metadata_analyzer_all_paths} (path_id) ON DELETE CASCADE
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_all_paths}
+    ADD CONSTRAINT {islandora_metadata_analyzer_results2}
+    FOREIGN KEY (result_id) REFERENCES {islandora_metadata_analyzer_results} (result_id) ON DELETE CASCADE
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_pids}
+    ADD CONSTRAINT {islandora_metadata_analyzer_results3}
+    FOREIGN KEY (result_id) REFERENCES {islandora_metadata_analyzer_results} (result_id) ON DELETE CASCADE
+  ');
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */ 
+function islandora_metadata_analyzer_uninstall() {
+  // Make real foreign keys.
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_paths}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_results}
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_path_data}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_paths}
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_data_pids}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_path_data}
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_all_pids}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_all_paths}
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_all_paths}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_results2}
+  ');
+  db_query('
+    ALTER TABLE {islandora_metadata_analyzer_pids}
+    DROP FOREIGN KEY {islandora_metadata_analyzer_results3}
+  ');
+}
+
+
 /**
  * Implements hook_schema
  */
@@ -85,6 +156,12 @@ $schema['islandora_metadata_analyzer_paths'] = array(
       ),
     ),
     'primary key' => array('path_id'),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_results' => array(
+        'table' => 'islandora_metadata_analyzer_results',
+        'columns' => array('results_id' => 'results_id'),
+      ),
+    ),
 );
 
 /*Hold path and data relationship*/
@@ -113,6 +190,12 @@ $schema['islandora_metadata_analyzer_path_data'] = array(
       ),
     ),
     'primary key' => array('path_data_id'),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_paths' => array(
+        'table' => 'islandora_metadata_analyzer_paths',
+        'columns' => array('path_id' => 'path_id'),
+      ),
+    ),
 );
 
 
@@ -142,10 +225,16 @@ $schema['islandora_metadata_analyzer_data_pids'] = array(
       ),
     ),
     'primary key' => array('pid_id'),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_path_data' => array(
+        'table' => 'islandora_metadata_analyzer_path_data',
+        'columns' => array('path_data_id' => 'path_data_id'),
+      ),
+    ),
 );
 
 $schema['islandora_metadata_analyzer_pids'] = array(
-    'description' => t('Storage area for all pids looked at PIDs.'),
+    'description' => t('Storage area for all PIDs looked at during analysis.'),
     'fields' => array(
       'result_id' => array(
         'description' => t('Key to parent path set'), 
@@ -160,6 +249,12 @@ $schema['islandora_metadata_analyzer_pids'] = array(
         'length' => 128, 
         'not null' => TRUE,
         'default' => 'nodata', 
+      ),
+    ),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_results3' => array(
+        'table' => 'islandora_metadata_analyzer_results',
+        'columns' => array('results_id' => 'results_id'),
       ),
     ),
 );
@@ -191,6 +286,13 @@ $schema['islandora_metadata_analyzer_all_paths'] = array(
       ),
     ),
     'primary key' => array('path_id'),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_results' => array(
+        'table' => 'islandora_metadata_analyzer_results',
+        'columns' => array('results_id' => 'results_id'),
+      ),
+    ),
+
 );
 
 $schema['islandora_metadata_analyzer_all_pids'] = array(
@@ -211,6 +313,12 @@ $schema['islandora_metadata_analyzer_all_pids'] = array(
         'default' => 'nodata', 
       ),
     ),
+    'foreign keys' => array(
+      'islandora_metadata_analyzer_all_paths2' => array(
+        'table' => 'islandora_metadata_analyzer_all_paths',
+        'columns' => array('path_id' => 'path_id'),
+      ),
+    ),
 
 );
 
@@ -220,18 +328,5 @@ $schema['islandora_metadata_analyzer_all_pids'] = array(
 return $schema;
 
 }
-/*
-function islandora_metadata_analyzer_update_7100() {
-
- db_add_field('islandora_metadata_analyzer_results', 'stream', array(
-        'description' => t('Metadata stream processed'), 
-        'type' => 'varchar',
-        'length' => '32',
-        'not null' => TRUE,
-        'default' => 'no stream',)
- );
-
-}
-*/
 
 ?>

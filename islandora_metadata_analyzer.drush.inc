@@ -64,10 +64,13 @@ function drush_islandora_metadata_analyzer(){
   $result_set_title = drush_get_option('title');
   $capture_fields = drush_get_option('element_list');
 
-  $params = array('capture_fields' => $capture_field, 'result_set_title' => $result_set_title, 'datastream' => $stream);  
+  $params = array('capture_fields' => $capture_fields, 
+                'result_set_title' => $result_set_title, 
+                'stream' => $stream, 
+                'pid' => $collection_pid);  
 
   module_load_include('inc', 'islandora_metadata_analyzer', 'includes/analyzer');
 
-  islandora_metadata_analyzer($collection_pid, $stream, $params);
+  islandora_metadata_analyzer($params);
 
 }

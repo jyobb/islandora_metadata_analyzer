@@ -35,6 +35,14 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['metadata_analyzer/deleteResult'] = array(
+    'title' => 'Remove Metadata Analysis Results',
+    'page callback' => 'islandora_metadata_analyzer_delete_result',
+    'file' => 'includes/analyzer.inc',
+    'page arguements' => array(1),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
   $items['metadata_analyzer/searchReplace'] = array(
     'title' => 'Islandora Metadata Search Replace',
     'page callback' => 'drupal_get_form',

@@ -213,6 +213,24 @@ return $result_id;
 
 }
 
+
+/*
+ * @params result_id
+ *
+ * Delete analysis result
+ *
+ */ 
+function islandora_metadata_analyzer_delete_result($result_id) {
+
+$data_result = db_query("delete from islandora_metadata_analyzer_results where result_id = :result_id", array(":result_id" => $result_id));
+
+drupal_goto('metadata_analyzer/results');
+
+}
+
+
+
+
 /*
  * @params duration
  *
