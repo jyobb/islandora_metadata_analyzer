@@ -36,6 +36,7 @@ Navigate to the collection analysis page using the link in the right navigation 
 4. Select the fields to capture
 
 Drush interface is recommended for larger collections.
+
 drush islandora_metadata_analyzer --title=drushtest2 --metadata_stream=MODS --collection_PID=islandora:sp_basic_image_collection --element_list=subject
 
 
