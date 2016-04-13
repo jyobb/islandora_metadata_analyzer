@@ -26,8 +26,6 @@ N/A
 
 ## Documentation
 
-Not yet complete
-
 ## Usage
 
 Navigate to the collection analysis page using the link in the right navigation block. Here you can add:
@@ -37,8 +35,12 @@ Navigate to the collection analysis page using the link in the right navigation 
 3. Add the PID of the collection being inspected
 4. Select the fields to capture
 
+Drush interface is recommended for larger collections.
+drush islandora_metadata_analyzer --title=drushtest2 --metadata_stream=MODS --collection_PID=islandora:sp_basic_image_collection --element_list=subject
+
+
 ##Status
-Drush not working
+
 Currently does not look at books or subcollections.
 
 
