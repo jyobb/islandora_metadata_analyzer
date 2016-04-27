@@ -29,3 +29,26 @@ background-color: #C0C0C0;
 width: 600px;
 }
 
+.removedataelements {
+border:1px solid #e5e5e5;
+ background-color: #f8fff0; 
+}
+
+.removepids {
+border:1px solid #e5e5e5;
+ background-color: #f8fff0; 
+
+}
+.removemissingpids {
+color: #8c2e0b;
+border:1px solid #e5e5e5;
+background-color: #FeF5f1; 
+
+}
+
+.hideajax {
+color: #234600;
+}
+.hideajaxmissing {
+color: #8c2e0b;
+}

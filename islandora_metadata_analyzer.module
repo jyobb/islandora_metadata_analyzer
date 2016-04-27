@@ -43,6 +43,7 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_CALLBACK,
   );
+/*
   $items['metadata_analyzer/searchReplace'] = array(
     'title' => 'Islandora Metadata Search Replace',
     'page callback' => 'drupal_get_form',
@@ -50,6 +51,7 @@ function islandora_metadata_analyzer_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
+*/
   $items['metadata_analyzer/elementCount'] = array(
     'title' => 'Collection Element Analysis Results',
     'page callback' => 'islandora_metadata_analyzer_element_counts',
@@ -67,7 +69,7 @@ function islandora_metadata_analyzer_menu() {
   );
   
   $items['islandora_metadata_analyzer/ajax-path'] = array(
-    'title' => 'Collection Element Analysis Results',
+    'title' => 'Get data element at this path',
     'page callback' => 'islandora_metadata_analyzer_path_ajax',
     'access callback' => TRUE,
     'file' => 'includes/ajax.inc',
@@ -75,7 +77,7 @@ function islandora_metadata_analyzer_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['islandora_metadata_analyzer/ajax-data'] = array(
-    'title' => 'Collection Element Analysis Results',
+    'title' => 'Get pids of objects that have this data element',
     'page callback' => 'islandora_metadata_analyzer_data_ajax',
     'access callback' => TRUE,
     'file' => 'includes/ajax.inc',
@@ -92,7 +94,7 @@ function islandora_metadata_analyzer_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['islandora_metadata_analyzer/ajax-allpath'] = array(
-    'title' => 'Collection Element Analysis Results',
+    'title' => 'Get PIDS that have this path',
     'page callback' => 'islandora_metadata_analyzer_allpath_ajax',
     'access callback' => TRUE,
     'file' => 'includes/ajax.inc',
@@ -109,7 +111,7 @@ function islandora_metadata_analyzer_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['islandora_metadata_analyzer/ajax-allpathmissing'] = array(
-    'title' => 'Collection Element Analysis Results',
+    'title' => 'Get list of PIDS that do not have a path',
     'page callback' => 'islandora_metadata_analyzer_allpath_missing_ajax',
     'access callback' => TRUE,
     'file' => 'includes/ajax.inc',
@@ -117,7 +119,7 @@ function islandora_metadata_analyzer_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['islandora_metadata_analyzer/missingpiddownloads'] = array(
-    'title' => 'Collection Element Analysis Results',
+    'title' => 'Download list of PIDS missing a path',
     'page callback' => 'islandora_metadata_analyzer_download_all_missing_pids',
     'page arguements' => array(1),
     'file' => 'includes/ajax.inc',
@@ -162,6 +164,8 @@ function islandora_metadata_analyzer_theme($existing, $type, $theme, $path) {
     );
 }
 
+
+
 /*
  *  stub callback to manipulate and set variables for theme
  */
@@ -177,8 +181,17 @@ function template_preprocess_results_list(&$vars) {
  *
  */
 function template_preprocess_element_count(&$vars) {
-  //unserialize object
-  //$vars['countArray'] = unserialize($vars['countArray']);
+
+//Add javascript for closing PID views
+drupal_add_js(drupal_get_path('module', 'islandora_metadata_analyzer') . '/js/element.js',
+  array(
+    'group' => JS_THEME,
+    'preprocess' => TRUE,
+    'scope' => 'footer',
+    'weight' => '9999',
+  )
+);
+
 }
 
 

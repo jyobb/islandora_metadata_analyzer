@@ -1,5 +1,6 @@
 <?php
 
+
   
 
 ?>
@@ -16,16 +17,17 @@
 <div id="resultblock">
 <?php 
 foreach( $variables['countArray'] as $all_paths) {
+    $missing = $variables['record_count'] - $all_paths['count'];  
 
-  $link = l(t('View PIDS'), 'islandora_metadata_analyzer/ajax-allpath/nojs/' . $all_paths['path_id'], array('attributes' => array('class' => array('use-ajax'))));
-  $downloadlink = l(t('Download PIDS'), 'islandora_metadata_analyzer/piddownloads/' . $all_paths['path_id'] );
+  $link = l(t('View ' . $all_paths['count'] . ' PIDS'), 'islandora_metadata_analyzer/ajax-allpath/nojs/' . $all_paths['path_id'], array('attributes' => array('class' => array('use-ajax'))));
+  $downloadlink = l(t('Download ' . $all_paths['count'] . ' PIDS'), 'islandora_metadata_analyzer/piddownloads/' . $all_paths['path_id'] );
 
-  $missinglink = l(t('View Missing PIDS'), 'islandora_metadata_analyzer/ajax-allpathmissing/nojs/' . $all_paths['path_id'], array('attributes' => array('class' => array('use-ajax'))));
+  $missinglink = l(t('View ' . $missing . ' Missing PIDS'), 'islandora_metadata_analyzer/ajax-allpathmissing/nojs/' . $all_paths['path_id'], array('attributes' => array('class' => array('use-ajax'))));
 
-  $downloadmissinglink = l(t('Download PIDS'), 'islandora_metadata_analyzer/piddownloads/' . $all_paths['path_id'] );
+  $downloadmissinglink = l(t('Download ' . $missing . ' Missing PIDS'), 'islandora_metadata_analyzer/piddownloads/' . $all_paths['path_id'] );
   
   echo '<div class="allpath-container">';
-  echo '<div class="path-highlight">' . $all_paths['path'] . '  Total found: ' . $all_paths['count'] .' | ' . $link . ' | '. $downloadlink . ' | '. $missinglink . ' | '. $downloadmissinglink . '</div><div id="allpathpids-' . $all_paths['path_id'] . '"></div><div id="missingallpathpids-' . $all_paths['path_id'] . '"></div>';
+  echo '<div class="path-highlight">' . $all_paths['path'] .' | ' . $link . ' | '. $downloadlink . ' | '. $missinglink . ' | '. $downloadmissinglink . '</div><div id="allpathpids-' . $all_paths['path_id'] . '"></div><div id="missingallpathpids-' . $all_paths['path_id'] . '"></div>';
   echo '</div>';
 
 } 
