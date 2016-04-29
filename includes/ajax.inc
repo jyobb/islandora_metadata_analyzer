@@ -86,11 +86,15 @@ function islandora_metadata_analyzer_path_ajax($type='ajax', $path_id=0){
  *
  * Ajax helper function that retrieves data data
  *
- * Feed data elements to the above function
+ * Query database and create html that gets sent to the page data elements in the above function
  */
 function islandora_metadata_analyzer_load_path_data($path_id){
 
-$path_data = db_query("select * from {islandora_metadata_analyzer_path_data} p where p.path_id = :path_id", array(":path_id" => $path_id)); 
+//$path_data = db_query("select * from {islandora_metadata_analyzer_path_data} p where p.path_id = :path_id" ,array(":path_id" => $path_id)); 
+
+$path_data = db_query("select p.*, count(dp.pid) as c from islandora_metadata_analyzer_path_data p join islandora_metadata_analyzer_data_pids dp on p.path_data_id=dp.path_data_id where p.path_id = :path_id group by dp.path_data_id", array(":path_id" => $path_id));
+
+
 $out = '<div class="hideajax">Hide Data</div>';
 
 foreach($path_data as $path_content){
@@ -98,7 +102,7 @@ foreach($path_data as $path_content){
   if(strlen($tdata) != 0){ 
     $link = l(t($path_content->path_data), 'islandora_metadata_analyzer/ajax-data/nojs/' . $path_content->path_data_id, array('attributes' => array('class' => array('use-ajax'))));
     $downloadlink = l(t($path_content->path_data), 'islandora_metadata_analyzer/downloads/' . $path_content->path_data_id );
-    $out.= '<div id="pathdata-' . $path_content->path_data_id . '">' . $link . ' Download PIDs for: ' . $downloadlink . '</div><div id="datadata-' . $path_content->path_data_id . '"></div>';
+    $out.= '<div id="pathdata-' . $path_content->path_data_id . '">View ' . $path_content->c . ' PIDS for:' . $link . ' Download ' . $path_content->c . ' PIDs for: ' . $downloadlink . '</div><div id="datadata-' . $path_content->path_data_id . '"></div>';
 
   }else{
       $out .= '<div id="pathdata-' . $path_id . '">No Data</div>';
