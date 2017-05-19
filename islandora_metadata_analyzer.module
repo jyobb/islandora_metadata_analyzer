@@ -34,6 +34,13 @@ function islandora_metadata_analyzer_menu() {
     'file' => 'includes/analyzerViews.inc',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
+  );  
+  $items['metadata_analyzer/resultsdownload'] = array(
+    'title' => 'Metadata Analysis Results Download',
+    'page callback' => 'islandora_metadata_analyzer_results_download',
+    'file' => 'includes/analyzerViews.inc',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
   );
   $items['metadata_analyzer/deleteResult'] = array(
     'title' => 'Remove Metadata Analysis Results',
